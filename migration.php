@@ -43,7 +43,7 @@ $iblockId = $obIBlock->add([
 
 if ($iblockId) {
     CIBlock::SetPermission($iblockId, Array("1"=>"X", "2"=>"R"));
-    $properties = [
+    $arProperty = [
         [
             'NAME' => 'Телефон',
             'CODE' => 'PHONE',
@@ -70,11 +70,11 @@ if ($iblockId) {
         ],
     ];
 
-    foreach ($properties as $property) {
+    foreach ($arProperty as $property) {
         $result = PropertyTable::add($property);
     }
 
-    $elements = [
+    $arElement = [
         [
             'NAME' => 'Офис в Москве',
             'PHONE' => '+7 (495) 123-45-67',
@@ -112,9 +112,9 @@ if ($iblockId) {
         ],
     ];
 
-    $cibElement = new CIBlockElement();
-    foreach ($elements as $element) {
-        $result = $cibElement->add([
+    $obElement = new CIBlockElement();
+    foreach ($arElement as $element) {
+        $result = $obElement->add([
             'IBLOCK_ID' => $iblockId,
             'NAME' => $element['NAME'],
             'PROPERTY_VALUES' => [
@@ -125,6 +125,15 @@ if ($iblockId) {
             ],
         ]);
     }
+
+    echo('ID инфоблока '.$iblockId);
+    echo('<br>');
+    $indexData = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/map/index.php');
+    $indexData = str_replace('#IBLOCK_ID#', $iblockId, $indexData);
+    file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/map/index.php', $indexData);
+
+    echo('в map/index.php прописали');
+    echo('<br>');
     echo('Миграция выполнена');
 }
 ?>

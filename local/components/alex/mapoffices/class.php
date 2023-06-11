@@ -21,9 +21,9 @@ class MapOffices extends CBitrixComponent
         Loader::includeModule("iblock");
 
         $iblockId = $this->arParams["IBLOCK_ID"];
-        /** @var \Bitrix\Main\ORM\Query\Query $query * */
-        $query = \Bitrix\Iblock\Elements\ElementOfficesTable::query();
-        $res = $query->setFilter(["IBLOCK_ID" => $iblockId])
+        /** @var \Bitrix\Main\ORM\Query\Query $obQuery * */
+        $obQuery = \Bitrix\Iblock\Elements\ElementOfficesTable::query();
+        $obResult = $obQuery->setFilter(["IBLOCK_ID" => $iblockId])
             ->setSelect(
                 [
                     "ID",
@@ -36,21 +36,21 @@ class MapOffices extends CBitrixComponent
             )
             ->exec();
 
-        $offices = [];
-        while ($office = $res->fetch()) {
+        $arOffices = [];
+        while ($arOffice = $obResult->fetch()) {
             if (!defined('BX_UTF')) {
-                array_walk($office, [$this, 'convertToUtf']);
+                array_walk($arOffice, [$this, 'convertToUtf']);
             }
-            $offices[] = [
-                "name" => $office["NAME"],
-                "phone" => $office["PHONE_VALUE"],
-                "email" => $office["EMAIL_VALUE"],
-                "city" => $office["CITY_VALUE"],
-                "coords" => explode(',', $office["COORDS_VALUE"]),
+            $arOffices[] = [
+                "name" => $arOffice["NAME"],
+                "phone" => $arOffice["PHONE_VALUE"],
+                "email" => $arOffice["EMAIL_VALUE"],
+                "city" => $arOffice["CITY_VALUE"],
+                "coords" => explode(',', $arOffice["COORDS_VALUE"]),
             ];
         }
 
-        return $offices;
+        return $arOffices;
     }
 
     private function convertToUtf(&$value, $key)
@@ -60,9 +60,9 @@ class MapOffices extends CBitrixComponent
 
     private function setCacheTag()
     {
-        $taggedCache = \Bitrix\Main\Application::getInstance()
+        $obTaggedCache = \Bitrix\Main\Application::getInstance()
             ->getTaggedCache();
-        $taggedCache->registerTag('iblock_id_' . $this->arParams["IBLOCK_ID"]);
+        $obTaggedCache->registerTag('iblock_id_' . $this->arParams["IBLOCK_ID"]);
     }
 
 }
